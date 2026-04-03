@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>毛毛虫学数学</title>
+    <style>
+        /* 页面整体设置 */
+        body {
+            font-family: 'Comic Sans MS', 'Microsoft YaHei', sans-serif;
+            background-color: #e8f5e9;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* 顶部多语言计数器的样式 */
+        .counter-container {
+            background-color: #fff;
+            padding: 15px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border: 4px solid #ffb300;
+            margin-bottom: 50px;
+            position: absolute;
+            top: 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .counter-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        /* 包含四个元素的展示区 */
+        .language-display {
+            display: flex;
+            gap: 20px;
+            text-align: center;
+        }
+
+        /* 每个语言块的共同样式 */
+        .lang-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            padding: 10px;
+            border-radius: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .lang-label {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .lang-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        /* 为不同的语言设置不同的颜色 */
+        #count-num { color: #e91e63; font-size: 2.2em; } /* 数字：粉红色 */
+        #count-en { color: #2196f3; }  /* 英文：蓝色 */
+        #count-ms { color: #4caf50; }  /* 马来文：绿色 */
+        #count-zh { color: #ff9800; }  /* 中文：橙色 */
+
+        /* 毛毛虫整体容器 */
+        .caterpillar-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 90vw;
+            margin-top: 80px; /* 给上面的大计数器留出空间 */
+        }
+
+        /* 毛毛虫的头部 */
+        .head {
+            width: 80px;
+            height: 80px;
+            background-color: #ffb300;
+            border-radius: 50%;
+            position: relative;
+            z-index: 30;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), 3px 3px 8px rgba(0,0,0,0.2);
+            margin-right: -10px;
+        }
+
+        /* 触角、眼睛和嘴巴 */
+        .antenna { position: absolute; width: 6px; height: 25px; background-color: #555; top: -20px; border-radius: 3px; }
+        .antenna.left { left: 20px; transform: rotate(-30deg); }
+        .antenna.right { right: 20px; transform: rotate(30deg); }
+        .antenna::after { content: ''; position: absolute; width: 14px; height: 14px; background-color: #e53935; border-radius: 50%; top: -10px; left: -4px; }
+        
+        .eye { position: absolute; width: 15px; height: 15px; background-color: white; border-radius: 50%; top: 25px; }
+        .eye.left { left: 15px; }
+        .eye.right { right: 15px; }
+        .eye::after { content: ''; position: absolute; width: 6px; height: 6px; background-color: black; border-radius: 50%; top: 4px; left: 4px; }
+        
+        .mouth { position: absolute; width: 30px; height: 15px; border-bottom: 4px solid #555; border-radius: 0 0 30px 30px; bottom: 15px; left: 25px; }
+
+        /* 身体 */
+        .body-segments { display: flex; align-items: center; }
+
+        .segment {
+            width: 60px;
+            height: 60px;
+            background-color: #f44336;
+            border-radius: 50%;
+            margin-left: -15px;
+            cursor: pointer;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), 2px 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .segment.blue {
+            background-color: #2196f3;
+            transform: scale(1.1);
+            z-index: 20;
+        }
+
+        .segment:nth-child(even) { transform: translateY(12px); }
+        .segment:nth-child(odd) { transform: translateY(-12px); }
+        .segment.blue:nth-child(even) { transform: translateY(12px) scale(1.1); }
+        .segment.blue:nth-child(odd) { transform: translateY(-12px) scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <div class="counter-container">
+        <div class="counter-title">Mari Bilang Bersama!</div>
+        <div class="language-display">
+            <div class="lang-box">
+                <span class="lang-label">123</span>
+                <span class="lang-value" id="count-num">0</span>
+            </div>
+            <div class="lang-box">
+                <span class="lang-label">English</span>
+                <span class="lang-value" id="count-en">Zero</span>
+            </div>
+            <div class="lang-box">
+                <span class="lang-label">Bahasa Melayu</span>
+                <span class="lang-value" id="count-ms">Sifar</span>
+            </div>
+            <div class="lang-box">
+                <span class="lang-label">中文</span>
+                <span class="lang-value" id="count-zh">零</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="caterpillar-wrapper">
+        <div class="head">
+            <div class="antenna left"></div>
+            <div class="antenna right"></div>
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="mouth"></div>
+        </div>
+        <div class="body-segments" id="body-container"></div>
+    </div>
+
+    <script>
+        const bodyContainer = document.getElementById('body-container');
+        
+        // 获取四个显示元素的节点
+        const elNum = document.getElementById('count-num');
+        const elEn = document.getElementById('count-en');
+        const elMs = document.getElementById('count-ms');
+        const elZh = document.getElementById('count-zh');
+        
+        let blueCount = 0; 
+
+        // 建立 0-20 的语言字典
+        const wordsEn = ["Zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
+        const wordsMs = ["kosong", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "lapan", "sembilan", "sepuluh", "sebelas", "dua belas", "tiga belas", "empat belas", "lima belas", "enam belas", "tujuh belas", "lapan belas", "sembilan belas", "dua puluh"];
+        const wordsZh = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十"];
+
+        // 更新计数器显示内容的函数
+        function updateCounter() {
+            elNum.textContent = blueCount;
+            elEn.textContent = wordsEn[blueCount];
+            elMs.textContent = wordsMs[blueCount];
+            elZh.textContent = wordsZh[blueCount];
+        }
+
+        // 生成 20 个圆圈身体
+        for (let i = 0; i < 20; i++) {
+            const segment = document.createElement('div');
+            segment.classList.add('segment');
+            segment.style.zIndex = 20 - i;
+
+            segment.addEventListener('click', () => {
+                if (segment.classList.contains('blue')) {
+                    segment.classList.remove('blue');
+                    blueCount--;
+                } else {
+                    segment.classList.add('blue');
+                    blueCount++;
+                }
+                // 调用更新函数
+                updateCounter();
+            });
+
+            bodyContainer.appendChild(segment);
+        }
+    </script>
+</body>
+</html>
